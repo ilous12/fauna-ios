@@ -21,8 +21,15 @@
 @class FNFuture;
 
 @interface FNSQLiteCache : FNCache
-+ (id)persistentCacheWithName:(const NSString*)name;
-+ (id)volatileCache;
-- (id)initPersistentWithName:(const NSString*)name;
-- (id)initInMemory;
+
+- (id)initWithSQLitePath:(NSString *)path maxSize:(NSUInteger)maxSize;
+
+- (id)initWithName:(NSString *)name maxSize:(NSUInteger)maxSize;
+
++ (id)cacheWithName:(NSString *)name maxSize:(NSUInteger)maxSize;
+
+- (long long)fileSize;
+
+- (void)close;
+
 @end

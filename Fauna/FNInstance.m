@@ -20,6 +20,7 @@
 #import "FNEventSet.h"
 #import "FNContext.h"
 #import "FNInstance.h"
+#import "NSString+FNStringExtensions.h"
 
 @implementation FNInstance
 
@@ -31,12 +32,31 @@
   return [FNEventSet eventSetWithRef:self.faunaClass];
 }
 
++ (FNFuture *)uniqueIDPresence:(NSString *)uniqueID {
+  if (!self.faunaClass) {
+    @throw FNInvalidResourceClass(@"+faunaClass is not defined on %@.", self);
+  }
+
+  NSString *escapedID = [uniqueID urlEscapedWithEncoding:NSUTF8StringEncoding];
+  NSString *path = [NSString stringWithFormat:@"%@/unique_id/%@", self.faunaClass, escapedID];
+
+  return [[FNContext get:path parameters:@{}] transform:^(FNFuture *result) {
+    if (!result.isError) {
+      return [FNFuture value:@YES];
+    } else if (result.isError && result.error.isFNNotFound) {
+      return [FNFuture value:@NO];
+    } else {
+      return result;
+    }
+  }];
+}
+
 + (BOOL)allowNewResources {
   return YES;
 }
 
 - (FNFuture *)destroy {
-  return [FNContext delete:self.ref].done;
+  return [FNContext deleteResource:self.ref].done;
 }
 
 @end

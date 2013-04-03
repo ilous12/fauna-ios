@@ -11,9 +11,7 @@
 		074CF7991678713F00686606 /* Fauna.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 074CF7981678713F00686606 /* Fauna.h */; };
 		075959F916C167FD00426133 /* FNContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 075959F816C167FD00426133 /* FNContext.m */; };
 		075959FA16C16A1300426133 /* FNContext.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 075959F716C167FD00426133 /* FNContext.h */; };
-		0786693816A8CEC000B3639C /* FaunaCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 0786693716A8CEC000B3639C /* FaunaCache.m */; };
 		0786693A16A8D74900B3639C /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0786693916A8D74900B3639C /* libsqlite3.dylib */; };
-		0786693B16A8D94600B3639C /* FaunaCache.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0786693616A8CEC000B3639C /* FaunaCache.h */; };
 		07D9FFAA16DF34E100D6173F /* FNUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D9FFA916DF34E100D6173F /* FNUser.m */; };
 		07D9FFAB16DF376400D6173F /* FNUser.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 07D9FFA816DF34E100D6173F /* FNUser.h */; };
 		07F28A6616C36FEF006EE2A8 /* FNInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F28A6516C36FEF006EE2A8 /* FNInstance.m */; };
@@ -21,7 +19,7 @@
 		07F28A6A16C37B17006EE2A8 /* FNInstance.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 07F28A6416C36FEF006EE2A8 /* FNInstance.h */; };
 		07F28A6B16C37B17006EE2A8 /* FNResource.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 07F28A6716C37143006EE2A8 /* FNResource.h */; };
 		0C73421A16FA3F3B0007796B /* FNSQLiteCacheTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C73421916FA3F3B0007796B /* FNSQLiteCacheTest.m */; };
-		0C73421B16FA400E0007796B /* FNSQLiteCache.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0CF0FACB16F925890081E7F5 /* FNSQLiteCache.h */; };
+		0C8693351700DDE700CE5033 /* FNSQLiteConnectionThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C8693341700DDE700CE5033 /* FNSQLiteConnectionThread.m */; };
 		0CF0FACD16F925890081E7F5 /* FNSQLiteCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CF0FACC16F925890081E7F5 /* FNSQLiteCache.m */; };
 		AC06AA8916EE9336006BECBD /* FNFuture.m in Sources */ = {isa = PBXBuildFile; fileRef = AC06AA8416EE9336006BECBD /* FNFuture.m */; };
 		AC06AA8A16EE9336006BECBD /* FNMutableFuture.m in Sources */ = {isa = PBXBuildFile; fileRef = AC06AA8616EE9336006BECBD /* FNMutableFuture.m */; };
@@ -40,6 +38,13 @@
 		AC59B2AE16F91B7200026D37 /* FNEventSet.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = AC59B2AB16F8FC4600026D37 /* FNEventSet.h */; };
 		AC59B2B116F92CE600026D37 /* FNEventSetTest.m in Sources */ = {isa = PBXBuildFile; fileRef = AC59B2B016F92CE600026D37 /* FNEventSetTest.m */; };
 		AC59B2B416F92E8E00026D37 /* FNMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = AC59B2B316F92E8E00026D37 /* FNMessage.m */; };
+		AC697942170B71AB00F37ACE /* NSDictionary+FNFunctionalEnumeration.m in Sources */ = {isa = PBXBuildFile; fileRef = AC697941170B71AB00F37ACE /* NSDictionary+FNFunctionalEnumeration.m */; };
+		AC697945170B8D0000F37ACE /* FNRequestOperation.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = AC903B5F16FBB5F500D7A08B /* FNRequestOperation.h */; };
+		AC697946170B8D0000F37ACE /* FNTimestamp.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = ACF552CA1705048900916CBC /* FNTimestamp.h */; };
+		AC697947170B8D0000F37ACE /* FNContextConfig.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = ACF552CD1705074600916CBC /* FNContextConfig.h */; };
+		AC69794A170B987F00F37ACE /* FNNullCache.m in Sources */ = {isa = PBXBuildFile; fileRef = AC697949170B987F00F37ACE /* FNNullCache.m */; };
+		AC69794C170BAE8B00F37ACE /* FNSQLiteCache.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0CF0FACB16F925890081E7F5 /* FNSQLiteCache.h */; };
+		AC69794D170BAE8B00F37ACE /* FNNullCache.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = AC697948170B987F00F37ACE /* FNNullCache.h */; };
 		AC6C5FE116E937D3003A17DD /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC6C5FE016E937D3003A17DD /* GHUnitIOS.framework */; };
 		AC6C5FE216E937DB003A17DD /* libFauna.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 074CF7901678713F00686606 /* libFauna.a */; };
 		AC72123B16F1043500190261 /* NSObject+FNBlockObservation.m in Sources */ = {isa = PBXBuildFile; fileRef = AC72123A16F1043500190261 /* NSObject+FNBlockObservation.m */; };
@@ -57,6 +62,8 @@
 		AC896F5016EFFD6C008C6F7B /* NSString+FNStringExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = AC896F4F16EFFD6C008C6F7B /* NSString+FNStringExtensions.m */; };
 		AC903B5E16FBA7CE00D7A08B /* NSDictionary+FNDictionaryExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = AC903B5D16FBA7CE00D7A08B /* NSDictionary+FNDictionaryExtensions.m */; };
 		AC903B6116FBB5F500D7A08B /* FNRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = AC903B6016FBB5F500D7A08B /* FNRequestOperation.m */; };
+		AC9DC090170C9AAE00576A8C /* NSDictionary+FNMutableDeepCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = AC9DC08F170C9AAE00576A8C /* NSDictionary+FNMutableDeepCopy.m */; };
+		AC9DC093170CA41400576A8C /* NSArray+FNMutableDeepCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = AC9DC092170CA41400576A8C /* NSArray+FNMutableDeepCopy.m */; };
 		ACAA44A316FD7C2500E00929 /* FNCache.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAA44A216FD7C2500E00929 /* FNCache.m */; };
 		ACADB88116FA3D6B006CD4CA /* NSArray+FNFunctionalEnumeration.m in Sources */ = {isa = PBXBuildFile; fileRef = ACADB88016FA3D6B006CD4CA /* NSArray+FNFunctionalEnumeration.m */; };
 		ACB0B4A916E92A6800B6E7AA /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0786693916A8D74900B3639C /* libsqlite3.dylib */; };
@@ -70,6 +77,10 @@
 		ACDEDB8716E81030005B2B73 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACDEDB8616E81030005B2B73 /* Default-568h@2x.png */; };
 		ACE3EC7416EA7AF200E1C2B1 /* FNClient.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE3EC7316EA7AF200E1C2B1 /* FNClient.m */; };
 		ACE3EC8616EC673300E1C2B1 /* FNError.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE3EC8516EC673300E1C2B1 /* FNError.m */; };
+		ACF552C61704F0E900916CBC /* NSThread+FNFutureOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = ACF552C51704F0E900916CBC /* NSThread+FNFutureOperations.m */; };
+		ACF552C91704F9B800916CBC /* FNSQLiteConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = ACF552C81704F9B800916CBC /* FNSQLiteConnection.m */; };
+		ACF552CC1705048900916CBC /* FNTimestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = ACF552CB1705048900916CBC /* FNTimestamp.m */; };
+		ACF552CF1705074600916CBC /* FNContextConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = ACF552CE1705074600916CBC /* FNContextConfig.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,10 +100,14 @@
 			dstPath = "include/${PRODUCT_NAME}";
 			dstSubfolderSpec = 16;
 			files = (
+				AC69794C170BAE8B00F37ACE /* FNSQLiteCache.h in CopyFiles */,
+				AC69794D170BAE8B00F37ACE /* FNNullCache.h in CopyFiles */,
+				AC697945170B8D0000F37ACE /* FNRequestOperation.h in CopyFiles */,
+				AC697946170B8D0000F37ACE /* FNTimestamp.h in CopyFiles */,
+				AC697947170B8D0000F37ACE /* FNContextConfig.h in CopyFiles */,
 				AC87EEE716FCF26600A0A198 /* FNCache.h in CopyFiles */,
 				AC87EEE616FCF25600A0A198 /* FNNetworkStatus.h in CopyFiles */,
 				AC59B2AE16F91B7200026D37 /* FNEventSet.h in CopyFiles */,
-				0C73421B16FA400E0007796B /* FNSQLiteCache.h in CopyFiles */,
 				AC30BDE116F3F8EA00B47081 /* FNPublisher.h in CopyFiles */,
 				AC72123F16F1193100190261 /* FNClient.h in CopyFiles */,
 				AC896F4D16EFE5F9008C6F7B /* FNValueFuture.h in CopyFiles */,
@@ -105,7 +120,6 @@
 				07F28A6A16C37B17006EE2A8 /* FNInstance.h in CopyFiles */,
 				07F28A6B16C37B17006EE2A8 /* FNResource.h in CopyFiles */,
 				075959FA16C16A1300426133 /* FNContext.h in CopyFiles */,
-				0786693B16A8D94600B3639C /* FaunaCache.h in CopyFiles */,
 				074CF7991678713F00686606 /* Fauna.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,8 +133,6 @@
 		074CF7981678713F00686606 /* Fauna.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fauna.h; sourceTree = "<group>"; };
 		075959F716C167FD00426133 /* FNContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNContext.h; sourceTree = "<group>"; };
 		075959F816C167FD00426133 /* FNContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNContext.m; sourceTree = "<group>"; };
-		0786693616A8CEC000B3639C /* FaunaCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaunaCache.h; sourceTree = "<group>"; };
-		0786693716A8CEC000B3639C /* FaunaCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaunaCache.m; sourceTree = "<group>"; };
 		0786693916A8D74900B3639C /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		07D9FFA816DF34E100D6173F /* FNUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNUser.h; sourceTree = "<group>"; };
 		07D9FFA916DF34E100D6173F /* FNUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNUser.m; sourceTree = "<group>"; };
@@ -129,6 +141,8 @@
 		07F28A6716C37143006EE2A8 /* FNResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNResource.h; sourceTree = "<group>"; };
 		07F28A6816C37143006EE2A8 /* FNResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNResource.m; sourceTree = "<group>"; };
 		0C73421916FA3F3B0007796B /* FNSQLiteCacheTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNSQLiteCacheTest.m; sourceTree = "<group>"; };
+		0C8693331700DDE700CE5033 /* FNSQLiteConnectionThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNSQLiteConnectionThread.h; sourceTree = "<group>"; };
+		0C8693341700DDE700CE5033 /* FNSQLiteConnectionThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNSQLiteConnectionThread.m; sourceTree = "<group>"; };
 		0CF0FACB16F925890081E7F5 /* FNSQLiteCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNSQLiteCache.h; sourceTree = "<group>"; };
 		0CF0FACC16F925890081E7F5 /* FNSQLiteCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNSQLiteCache.m; sourceTree = "<group>"; };
 		0CF0FACE16FA3C4A0081E7F5 /* FNCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FNCache.h; sourceTree = "<group>"; };
@@ -151,6 +165,10 @@
 		AC59B2B016F92CE600026D37 /* FNEventSetTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNEventSetTest.m; sourceTree = "<group>"; };
 		AC59B2B216F92E8E00026D37 /* FNMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNMessage.h; sourceTree = "<group>"; };
 		AC59B2B316F92E8E00026D37 /* FNMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNMessage.m; sourceTree = "<group>"; };
+		AC697940170B71AB00F37ACE /* NSDictionary+FNFunctionalEnumeration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+FNFunctionalEnumeration.h"; path = "Categories/NSDictionary+FNFunctionalEnumeration.h"; sourceTree = "<group>"; };
+		AC697941170B71AB00F37ACE /* NSDictionary+FNFunctionalEnumeration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+FNFunctionalEnumeration.m"; path = "Categories/NSDictionary+FNFunctionalEnumeration.m"; sourceTree = "<group>"; };
+		AC697948170B987F00F37ACE /* FNNullCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNNullCache.h; sourceTree = "<group>"; };
+		AC697949170B987F00F37ACE /* FNNullCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNNullCache.m; sourceTree = "<group>"; };
 		AC6C5FE016E937D3003A17DD /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnitIOS.framework; path = Vendor/GHUnitIOS.framework; sourceTree = "<group>"; };
 		AC72123916F1043500190261 /* NSObject+FNBlockObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+FNBlockObservation.h"; path = "Categories/NSObject+FNBlockObservation.h"; sourceTree = "<group>"; };
 		AC72123A16F1043500190261 /* NSObject+FNBlockObservation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+FNBlockObservation.m"; path = "Categories/NSObject+FNBlockObservation.m"; sourceTree = "<group>"; };
@@ -166,6 +184,10 @@
 		AC903B5D16FBA7CE00D7A08B /* NSDictionary+FNDictionaryExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+FNDictionaryExtensions.m"; path = "Categories/NSDictionary+FNDictionaryExtensions.m"; sourceTree = "<group>"; };
 		AC903B5F16FBB5F500D7A08B /* FNRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNRequestOperation.h; sourceTree = "<group>"; };
 		AC903B6016FBB5F500D7A08B /* FNRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNRequestOperation.m; sourceTree = "<group>"; };
+		AC9DC08E170C9AAE00576A8C /* NSDictionary+FNMutableDeepCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+FNMutableDeepCopy.h"; path = "Categories/NSDictionary+FNMutableDeepCopy.h"; sourceTree = "<group>"; };
+		AC9DC08F170C9AAE00576A8C /* NSDictionary+FNMutableDeepCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+FNMutableDeepCopy.m"; path = "Categories/NSDictionary+FNMutableDeepCopy.m"; sourceTree = "<group>"; };
+		AC9DC091170CA41400576A8C /* NSArray+FNMutableDeepCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+FNMutableDeepCopy.h"; path = "Categories/NSArray+FNMutableDeepCopy.h"; sourceTree = "<group>"; };
+		AC9DC092170CA41400576A8C /* NSArray+FNMutableDeepCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+FNMutableDeepCopy.m"; path = "Categories/NSArray+FNMutableDeepCopy.m"; sourceTree = "<group>"; };
 		ACAA44A216FD7C2500E00929 /* FNCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNCache.m; sourceTree = "<group>"; };
 		ACADB87F16FA3D6B006CD4CA /* NSArray+FNFunctionalEnumeration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+FNFunctionalEnumeration.h"; path = "Categories/NSArray+FNFunctionalEnumeration.h"; sourceTree = "<group>"; };
 		ACADB88016FA3D6B006CD4CA /* NSArray+FNFunctionalEnumeration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+FNFunctionalEnumeration.m"; path = "Categories/NSArray+FNFunctionalEnumeration.m"; sourceTree = "<group>"; };
@@ -185,6 +207,14 @@
 		ACE3EC7316EA7AF200E1C2B1 /* FNClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNClient.m; sourceTree = "<group>"; };
 		ACE3EC8416EC673300E1C2B1 /* FNError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNError.h; sourceTree = "<group>"; };
 		ACE3EC8516EC673300E1C2B1 /* FNError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNError.m; sourceTree = "<group>"; };
+		ACF552C41704F0E900916CBC /* NSThread+FNFutureOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSThread+FNFutureOperations.h"; path = "Categories/NSThread+FNFutureOperations.h"; sourceTree = "<group>"; };
+		ACF552C51704F0E900916CBC /* NSThread+FNFutureOperations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSThread+FNFutureOperations.m"; path = "Categories/NSThread+FNFutureOperations.m"; sourceTree = "<group>"; };
+		ACF552C71704F9B800916CBC /* FNSQLiteConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNSQLiteConnection.h; sourceTree = "<group>"; };
+		ACF552C81704F9B800916CBC /* FNSQLiteConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNSQLiteConnection.m; sourceTree = "<group>"; };
+		ACF552CA1705048900916CBC /* FNTimestamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNTimestamp.h; sourceTree = "<group>"; };
+		ACF552CB1705048900916CBC /* FNTimestamp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNTimestamp.m; sourceTree = "<group>"; };
+		ACF552CD1705074600916CBC /* FNContextConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNContextConfig.h; sourceTree = "<group>"; };
+		ACF552CE1705074600916CBC /* FNContextConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNContextConfig.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,6 +323,10 @@
 				AC903B6016FBB5F500D7A08B /* FNRequestOperation.m */,
 				AC87EEE116FCE4B300A0A198 /* FNNetworkStatus.h */,
 				AC87EEE216FCE4B300A0A198 /* FNNetworkStatus.m */,
+				ACF552CA1705048900916CBC /* FNTimestamp.h */,
+				ACF552CB1705048900916CBC /* FNTimestamp.m */,
+				ACF552CD1705074600916CBC /* FNContextConfig.h */,
+				ACF552CE1705074600916CBC /* FNContextConfig.m */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -302,10 +336,14 @@
 			children = (
 				0CF0FACE16FA3C4A0081E7F5 /* FNCache.h */,
 				ACAA44A216FD7C2500E00929 /* FNCache.m */,
-				0786693716A8CEC000B3639C /* FaunaCache.m */,
-				0786693616A8CEC000B3639C /* FaunaCache.h */,
 				0CF0FACB16F925890081E7F5 /* FNSQLiteCache.h */,
 				0CF0FACC16F925890081E7F5 /* FNSQLiteCache.m */,
+				0C8693331700DDE700CE5033 /* FNSQLiteConnectionThread.h */,
+				0C8693341700DDE700CE5033 /* FNSQLiteConnectionThread.m */,
+				ACF552C71704F9B800916CBC /* FNSQLiteConnection.h */,
+				ACF552C81704F9B800916CBC /* FNSQLiteConnection.m */,
+				AC697948170B987F00F37ACE /* FNNullCache.h */,
+				AC697949170B987F00F37ACE /* FNNullCache.m */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
@@ -338,6 +376,14 @@
 				ACADB88016FA3D6B006CD4CA /* NSArray+FNFunctionalEnumeration.m */,
 				AC903B5C16FBA7CE00D7A08B /* NSDictionary+FNDictionaryExtensions.h */,
 				AC903B5D16FBA7CE00D7A08B /* NSDictionary+FNDictionaryExtensions.m */,
+				ACF552C41704F0E900916CBC /* NSThread+FNFutureOperations.h */,
+				ACF552C51704F0E900916CBC /* NSThread+FNFutureOperations.m */,
+				AC697940170B71AB00F37ACE /* NSDictionary+FNFunctionalEnumeration.h */,
+				AC697941170B71AB00F37ACE /* NSDictionary+FNFunctionalEnumeration.m */,
+				AC9DC08E170C9AAE00576A8C /* NSDictionary+FNMutableDeepCopy.h */,
+				AC9DC08F170C9AAE00576A8C /* NSDictionary+FNMutableDeepCopy.m */,
+				AC9DC091170CA41400576A8C /* NSArray+FNMutableDeepCopy.h */,
+				AC9DC092170CA41400576A8C /* NSArray+FNMutableDeepCopy.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -464,8 +510,9 @@
 				"$(DERIVED_FILE_DIR)/FaunaCredentials.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/bin/bash -e";
-			shellScript = "# run the user's configured shell interactively in order to pull in their shell-configured environment (rbenv, etc)\n$SHELL -i -c 'ruby ${PROJECT_DIR}/Tests/fauna_test_config.rb ${DERIVED_FILE_DIR}/FaunaCredentials.h'";
+			shellPath = /bin/sh;
+			shellScript = "# run the user's configured shell interactively in order to pull in their shell-configured environment (rbenv, etc)\nexec $SHELL -i -c 'ruby ${PROJECT_DIR}/Tests/fauna_test_config.rb ${DERIVED_FILE_DIR}/FaunaCredentials.h'";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -474,7 +521,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0786693816A8CEC000B3639C /* FaunaCache.m in Sources */,
 				075959F916C167FD00426133 /* FNContext.m in Sources */,
 				07F28A6616C36FEF006EE2A8 /* FNInstance.m in Sources */,
 				07F28A6916C37143006EE2A8 /* FNResource.m in Sources */,
@@ -496,6 +542,15 @@
 				AC903B6116FBB5F500D7A08B /* FNRequestOperation.m in Sources */,
 				AC87EEE316FCE4B300A0A198 /* FNNetworkStatus.m in Sources */,
 				ACAA44A316FD7C2500E00929 /* FNCache.m in Sources */,
+				0C8693351700DDE700CE5033 /* FNSQLiteConnectionThread.m in Sources */,
+				ACF552C61704F0E900916CBC /* NSThread+FNFutureOperations.m in Sources */,
+				ACF552C91704F9B800916CBC /* FNSQLiteConnection.m in Sources */,
+				ACF552CC1705048900916CBC /* FNTimestamp.m in Sources */,
+				ACF552CF1705074600916CBC /* FNContextConfig.m in Sources */,
+				AC697942170B71AB00F37ACE /* NSDictionary+FNFunctionalEnumeration.m in Sources */,
+				AC69794A170B987F00F37ACE /* FNNullCache.m in Sources */,
+				AC9DC090170C9AAE00576A8C /* NSDictionary+FNMutableDeepCopy.m in Sources */,
+				AC9DC093170CA41400576A8C /* NSArray+FNMutableDeepCopy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

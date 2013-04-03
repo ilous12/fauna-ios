@@ -20,6 +20,7 @@
 #import "FNContext.h"
 #import "FNError.h"
 #import "NSString+FNStringExtensions.h"
+#import "FNClient.h"
 
 @implementation FNUser
 
@@ -46,19 +47,21 @@
 }
 
 + (FNFuture *)tokenForEmail:(NSString *)email password:(NSString *)password {
-  return [[FNContext post:@"tokens"
-               parameters:@{@"email": email, @"password": password}]
-          map:^(NSDictionary *resource) {
-    return resource[@"token"];
+  return [[FNContext post:@"tokens" parameters:@{@"email": email, @"password": password}] map:^(FNResponse *res){
+    return res.resource[@"token"];
   }];
 }
 
 + (FNFuture *)tokenForUniqueID:(NSString *)uniqueID password:(NSString *)password {
-  return [[FNContext post:@"tokens"
-               parameters:@{@"unique_id": uniqueID, @"password": password}]
-          map:^(NSDictionary *resource) {
-            return resource[@"token"];
-          }];
+  return [[FNContext post:@"tokens" parameters:@{@"unique_id": uniqueID, @"password": password}] map:^(FNResponse *res){
+    return res.resource[@"token"];
+  }];
+}
+
++ (FNFuture *)tokenForRef:(NSString *)ref password:(NSString *)password {
+  return [[FNContext post:@"tokens" parameters:@{@"ref": ref, @"password": password}] map:^(FNResponse *res){
+    return res.resource[@"token"];
+  }];
 }
 
 + (FNFuture *)contextForEmail:(NSString *)email password:(NSString *)password {
@@ -73,26 +76,19 @@
           }];
 }
 
-+ (FNFuture *)isEmailAvailable:(NSString *)email {
-  NSString *path = [NSString stringWithFormat:@"users/email_availability/%@", [email urlEscapedWithEncoding:NSUTF8StringEncoding]];
-  return [[FNContext get:path] transform:^(FNFuture *result) {
-    if (!result.isError) {
-      return [FNFuture value:@NO];
-    } else if (result.isError && result.error.isFNNotFound) {
-      return [FNFuture value:@YES];
-    } else {
-      return result;
-    }
++ (FNFuture *)contextForRef:(NSString *)ref password:(NSString *)password {
+  return [[self tokenForRef:ref password:password] map:^(NSString *token) {
+    return [FNContext contextWithKey:token];
   }];
 }
 
-+ (FNFuture *)isUniqueIDAvailable:(NSString *)uniqueID {
-  NSString *path = [NSString stringWithFormat:@"users/unique_id_availability/%@", [uniqueID urlEscapedWithEncoding:NSUTF8StringEncoding]];
-  return [[FNContext get:path] transform:^(FNFuture *result) {
++ (FNFuture *)emailPresence:(NSString *)email {
+  NSString *path = [NSString stringWithFormat:@"users/email/%@/presence", [email urlEscapedWithEncoding:NSUTF8StringEncoding]];
+  return [[FNContext get:path parameters:@{}] transform:^(FNFuture *result) {
     if (!result.isError) {
-      return [FNFuture value:@NO];
-    } else if (result.isError && result.error.isFNNotFound) {
       return [FNFuture value:@YES];
+    } else if (result.isError && result.error.isFNNotFound) {
+      return [FNFuture value:@NO];
     } else {
       return result;
     }

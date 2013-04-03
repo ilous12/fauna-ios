@@ -17,6 +17,13 @@
 
 @class FNFuture;
 
+typedef enum {
+  FNReachabilityOffline,
+  FNReachabilityWifi,
+  FNReachabilityWWAN
+} FNReachabilityStatus;
+
+FOUNDATION_EXPORT NSString * const FaunaAPIHost;
 FOUNDATION_EXPORT NSString * const FaunaAPIBaseURL;
 FOUNDATION_EXPORT NSString * const FaunaAPIVersion;
 
@@ -64,56 +71,41 @@ FOUNDATION_EXPORT NSString * const FaunaAPIVersion;
 - (instancetype)asUser:(NSString *)userRef;
 
 /*!
+ Returns the reachability status of the client
+ */
+- (FNReachabilityStatus)reachabilityStatus;
+
+/*!
  Perform a GET request of a specified resource.
  @param path the path of the resource
  @param parameters a Dictionary of query parameters to send with the request
+ @param timeout request timeout
  */
-- (FNFuture *)get:(NSString *)path parameters:(NSDictionary *)parameters;
-
-/*!
- Perform a GET request of a specified resource.
- @param path the path of the resource
- */
-- (FNFuture *)get:(NSString *)path;
+- (FNFuture *)get:(NSString *)path parameters:(NSDictionary *)parameters timeout:(NSTimeInterval)timeout;
 
 /*!
  Perform a POST request with the specified resource.
  @param path the path of the resource
  @param parameters a Dictionary of parameters to send with the request.
+ @param timeout request timeout
  */
-- (FNFuture *)post:(NSString *)path parameters:(NSDictionary *)parameters;
-
-/*!
- Perform a POST request with the specified resource.
- @param path the path of the resource
- */
-- (FNFuture *)post:(NSString *)path;
+- (FNFuture *)post:(NSString *)path parameters:(NSDictionary *)parameters timeout:(NSTimeInterval)timeout;
 
 /*!
  Perform a PUT request with the specified resource.
  @param path the path of the resource
  @param parameters a Dictionary of parameters to send with the request.
+ @param timeout request timeout
  */
-- (FNFuture *)put:(NSString *)path parameters:(NSDictionary *)parameters;
-
-/*!
- Perform a PUT request with the specified resource.
- @param path the path of the resource
- */
-- (FNFuture *)put:(NSString *)path;
+- (FNFuture *)put:(NSString *)path parameters:(NSDictionary *)parameters timeout:(NSTimeInterval)timeout;
 
 /*!
  Perform a DELETE request with the specified resource.
  @param path the path of the resource
  @param parameters a Dictionary of parameters to send with the request.
+ @param timeout request timeout
  */
-- (FNFuture *)delete:(NSString *)path parameters:(NSDictionary *)parameters;
-
-/*!
- Perform a DELETE request with the specified resource.
- @param path the path of the resource
- */
-- (FNFuture *)delete:(NSString *)path;
+- (FNFuture *)delete:(NSString *)path parameters:(NSDictionary *)parameters timeout:(NSTimeInterval)timeout;
 
 #pragma mark equality
 

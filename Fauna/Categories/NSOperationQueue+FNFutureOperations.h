@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations under the License.
 //
 
-#import "FNFuture.h"
+@class FNFuture;
 
 @interface NSOperationQueue (FNFutureOperations)
 

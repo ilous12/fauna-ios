@@ -19,11 +19,7 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "FNNetworkStatus.h"
 
-static int const Offline = 0;
-static int const Wifi = 1;
-static int const Cellular = 2;
-
-static int _status = 0;
+static FNReachabilityStatus _status = 1;
 static SCNetworkReachabilityRef reachabilityRef = NULL;
 
 @interface FNNetworkStatus ()
@@ -41,54 +37,77 @@ static void FNNetworkStatusCallback(SCNetworkReachabilityRef target, SCNetworkRe
 + (void)start {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    reachabilityRef = SCNetworkReachabilityCreateWithName(NULL, "rest.fauna.org");
+    LOG(@"FNNetworkStatus started.");
+
+    reachabilityRef = SCNetworkReachabilityCreateWithName(NULL, [FaunaAPIHost UTF8String]);
 
     SCNetworkReachabilityContext ctx = {0, NULL, NULL, NULL, NULL};
     if (!SCNetworkReachabilitySetCallback(reachabilityRef, FNNetworkStatusCallback, &ctx)) {
       @throw @"Failed to start Network Status listener.";
     }
 
-    if (!SCNetworkReachabilitySetDispatchQueue(reachabilityRef, dispatch_get_main_queue())) {
+    if (!SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef, CFRunLoopGetMain(), kCFRunLoopCommonModes)) {
       @throw @"Failed to start Network Status listener.";
     }
   });
 }
 
-+ (BOOL)isOnline {
-  return _status != Offline;
++ (FNReachabilityStatus)status {
+  return _status;
 }
 
-+ (BOOL)isCellular {
-  return _status == Cellular;
++ (BOOL)isOnline {
+  return _status != FNReachabilityOffline;
+}
+
++ (BOOL)isWWAN {
+  return _status == FNReachabilityWWAN;
 }
 
 + (void)updateReachability:(SCNetworkReachabilityFlags)flags {
   int prev = _status;
-  int status = Offline;
+  int status = FNReachabilityOffline;
+
+  LOG(@"Network Reachability flags: %c%c %c%c%c%c%c%c%c\n",
+      (flags & kSCNetworkReachabilityFlagsIsWWAN)				  ? 'W' : '-',
+      (flags & kSCNetworkReachabilityFlagsReachable)            ? 'R' : '-',
+
+      (flags & kSCNetworkReachabilityFlagsTransientConnection)  ? 't' : '-',
+      (flags & kSCNetworkReachabilityFlagsConnectionRequired)   ? 'c' : '-',
+      (flags & kSCNetworkReachabilityFlagsConnectionOnTraffic)  ? 'C' : '-',
+      (flags & kSCNetworkReachabilityFlagsInterventionRequired) ? 'i' : '-',
+      (flags & kSCNetworkReachabilityFlagsConnectionOnDemand)   ? 'D' : '-',
+      (flags & kSCNetworkReachabilityFlagsIsLocalAddress)       ? 'l' : '-',
+      (flags & kSCNetworkReachabilityFlagsIsDirect)             ? 'd' : '-'
+      );
 
   if (flags & kSCNetworkReachabilityFlagsReachable) {
-    if (flags & kSCNetworkReachabilityFlagsConnectionRequired) {
-      status = Wifi;
+    if (!(flags & kSCNetworkReachabilityFlagsConnectionRequired)) {
+      status = FNReachabilityWifi;
     }
 
     if (flags & (kSCNetworkReachabilityFlagsConnectionOnDemand | kSCNetworkReachabilityFlagsConnectionOnTraffic)) {
       if (!(flags & kSCNetworkReachabilityFlagsInterventionRequired)) {
-        status = Wifi;
+        status = FNReachabilityWifi;
       }
     }
 
     if (flags & kSCNetworkReachabilityFlagsIsWWAN) {
-      status = Cellular;
+      status = FNReachabilityWWAN;
     }
   }
 
   if (prev != status) {
-    if (prev == Offline || status == Offline) [self willChangeValueForKey:@"isOnline"];
-    if (prev == Cellular || status == Cellular) [self willChangeValueForKey:@"isCellular"];
+    [self willChangeValueForKey:@"status"];
+    if (prev == FNReachabilityOffline || status == FNReachabilityOffline) [self willChangeValueForKey:@"isOnline"];
+    if (prev == FNReachabilityWWAN || status == FNReachabilityWWAN) [self willChangeValueForKey:@"isWWAN"];
     _status = status;
     OSMemoryBarrier();
-    if (prev == Offline || status == Offline) [self didChangeValueForKey:@"isOnline"];
-    if (prev == Cellular || status == Cellular) [self didChangeValueForKey:@"isCellular"];
+    [self didChangeValueForKey:@"status"];
+    if (prev == FNReachabilityOffline || status == FNReachabilityOffline) [self didChangeValueForKey:@"isOnline"];
+    if (prev == FNReachabilityWWAN || status == FNReachabilityWWAN) [self didChangeValueForKey:@"isWWAN"];
+
+    LOG(@"Network Reachability: %@", status == FNReachabilityOffline ? @"Offline" : (status == FNReachabilityWifi ? @"Wifi" : @"WWAN"));
   }
 }
 

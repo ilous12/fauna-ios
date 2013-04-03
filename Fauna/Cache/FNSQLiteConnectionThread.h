@@ -1,5 +1,5 @@
 //
-// FaunaCache.h
+// FNSQLiteCache.h
 //
 // Copyright (c) 2013 Fauna, Inc.
 //
@@ -13,30 +13,19 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
-//
 
 #import <Foundation/Foundation.h>
+#import <sqlite3.h>
 
-@interface FaunaCache : NSObject
+@class FNFuture;
+@class FNSQLiteConnection;
 
-@property (nonatomic, readonly) NSString * name;
+@interface FNSQLiteConnectionThread: NSObject
 
-@property (nonatomic, readonly) BOOL isTransient;
+- (id)initWithSQLitePath:(NSString *)path;
 
-@property (nonatomic, strong) FaunaCache * parentContextCache;
+- (FNFuture *)withConnection:(id(^)(FNSQLiteConnection *db))block;
 
-- (id)initWithName:(NSString*)name;
-
-- (id)initTransient;
-
-- (void)saveResource:(NSDictionary*)resource;
-
-- (NSDictionary*)loadResource:(NSString*)ref;
-
-+ (FaunaCache*)scopeCache;
-
-- (void)scoped:(void (^)(void))block;
-
-+ (void)transient:(void (^)(void))block;
+- (void)close;
 
 @end

@@ -16,13 +16,22 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FNResource.h"
+
+FOUNDATION_EXPORT NSString * const FNCacheTombstone;
+
+NSError * CacheReadError();
+
+NSError * CacheWriteError();
 
 @class FNFuture;
 
 @interface FNCache : NSObject
 
-- (FNFuture *)setObject:(NSDictionary *)value forKey:(NSString *)key;
+- (FNFuture *)setObject:(NSDictionary *)value extraPaths:(NSArray *)paths timestamp:(FNTimestamp)timestamp;
 
-- (FNFuture *)valueForKey:(NSString *)key;
+- (FNFuture *)removeObjectForPath:(NSString *)path timestamp:(FNTimestamp)timestamp;
+
+- (FNFuture *)objectForPath:(NSString *)path after:(FNTimestamp)after;
 
 @end

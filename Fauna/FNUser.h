@@ -51,6 +51,13 @@
 + (FNFuture *)tokenForUniqueID:(NSString *)uniqueID password:(NSString *)password;
 
 /*!
+ Returns an authentication token for a user identified by a ref and password. The token may be used to construct an an FNContext to make requests on behalf of the user.
+ @param ref the user's ref
+ @param password the user's password
+ */
++ (FNFuture *)tokenForRef:(NSString *)ref password:(NSString *)password;
+
+/*!
  Returns an authentication context for a user identified by email and password.
  @param email the user's email
  @param password the user's password
@@ -65,16 +72,17 @@
 + (FNFuture *)contextForUniqueID:(NSString *)uniqueID password:(NSString *)password;
 
 /*!
- Returns a future containing @YES if no user exists with the given email, or @NO otherwise.
- @param email the email to test
+ Returns an authentication token for a user identified by a ref and password.
+ @param ref the user's ref
+ @param password the user's password
  */
-+ (FNFuture *)isEmailAvailable:(NSString *)email;
++ (FNFuture *)contextForRef:(NSString *)ref password:(NSString *)password;
 
 /*!
- Returns a future containing @YES if no user exists with the given unique ID, or @NO otherwise.
- @param uniqueID the unique ID to test
+ Returns a future containing @YES if a user exists with the given email, or @NO otherwise.
+ @param email the email to test
  */
-+ (FNFuture *)isUniqueIDAvailable:(NSString *)uniqueID;
++ (FNFuture *)emailPresence:(NSString *)email;
 
 /*!
  Set a new user's email. Set on a new user in order to create with an email address.

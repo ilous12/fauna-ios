@@ -15,14 +15,16 @@
 // specific language governing permissions and limitations under the License.
 //
 
-#import <Foundation/Foundation.h>
+#import "FNClient.h"
 
 @interface FNNetworkStatus : NSObject
 
 + (void)start;
 
++ (FNReachabilityStatus)status;
+
 + (BOOL)isOnline;
 
-+ (BOOL)isCellular;
++ (BOOL)isWWAN;
 
 @end

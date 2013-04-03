@@ -17,35 +17,14 @@
 
 #import "FNFuture.h"
 #import "FNError.h"
+#import "FNTimestamp.h"
 #import "FNContext.h"
 #import "FNResource.h"
 #import "FNInstance.h"
 #import "FNUser.h"
 #import "FNPublisher.h"
 #import "FNEventSet.h"
-
-FNTimestamp const FNTimestampMax = INT64_MAX;
-FNTimestamp const FNTimestampMin = 0;
-FNTimestamp const FNFirst = FNTimestampMin;
-FNTimestamp const FNLast = FNTimestampMax;
-
-NSDate * FNTimestampToNSDate(FNTimestamp ts) {
-  double micros = 1000000.0;
-  return [NSDate dateWithTimeIntervalSince1970:ts / micros];
-}
-
-FNTimestamp FNTimestampFromNSDate(NSDate *date) {
-  double micros = 1000000.0;
-  return date.timeIntervalSince1970 * micros;
-}
-
-NSNumber * FNTimestampToNSNumber(FNTimestamp ts) {
-  return @(ts);
-}
-
-FNTimestamp FNTimestampFromNSNumber(NSNumber *number) {
-  return number.longLongValue;
-}
+#import "NSDictionary+FNMutableDeepCopy.h"
 
 static NSMutableDictionary * FNResourceClassRegistry;
 
@@ -113,8 +92,7 @@ static void FNInitClassRegistry() {
 #pragma mark lifecycle
 
 - (id)initWithMutableDictionary:(NSMutableDictionary *)dictionary {
-  self = [super init];
-  if (self) {
+  if (self = [super init]) {
     _dictionary = dictionary;
   }
   return self;
@@ -129,15 +107,16 @@ static void FNInitClassRegistry() {
 }
 
 - (id)initWithClass:(NSString *)faunaClass {
-  NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:faunaClass
-                                                                 forKey:@"class"];
+  NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:faunaClass forKey:@"class"];
   return [self initWithMutableDictionary:dict];
 }
 
 - (id)initWithDictionary:(NSDictionary *)dictionary {
-  NSMutableDictionary *copy = [[NSMutableDictionary alloc] initWithDictionary:dictionary
-                                                                    copyItems:YES];
-  return [self initWithMutableDictionary:copy];
+  return [self initWithMutableDictionary:[dictionary mutableDeepCopy]];
+}
+
+- (instancetype)deepCopy {
+  return [[self.class alloc] initWithDictionary:self.dictionary];
 }
 
 #pragma mark Class methods
@@ -147,7 +126,7 @@ static void FNInitClassRegistry() {
 }
 
 + (FNFuture *)get:(NSString *)ref {
-  return [[FNContext get:ref parameters:@{}] map:^(NSDictionary *resource) {
+  return [[FNContext getResource:ref] map:^(NSDictionary *resource) {
     return [self resourceWithDictionary:resource];
   }];
 }
@@ -164,8 +143,8 @@ static void FNInitClassRegistry() {
     @throw FNInvalidResource(@"New resources of %@ cannot be saved.", self.class);
   }
 
-  FNFuture *res = self.ref ? [FNContext put:self.ref parameters:self.dictionary] :
-    [FNContext post:self.faunaClass parameters:self.dictionary];
+  FNFuture *res = self.ref ? [FNContext putResource:self.ref parameters:self.dictionary] :
+    [FNContext postResource:self.faunaClass parameters:self.dictionary];
 
   return [res map:^(NSDictionary *resource) {
     return [self.class resourceWithDictionary:resource];
@@ -208,26 +187,32 @@ static void FNInitClassRegistry() {
 
 - (NSMutableDictionary *)data {
   id value = self.dictionary[@"data"];
-  NSMutableDictionary *data = FNMutableDictionaryFromValue(value);
 
-  if (data != value) self.dictionary[@"data"] = data;
-  return data;
+  if (!value) {
+    value = [NSMutableDictionary new];
+    self.dictionary[@"data"] = value;
+  }
+
+  return value;
 }
 
 - (void)setData:(NSMutableDictionary *)data {
-  self.dictionary[@"data"] = data;
+  self.dictionary[@"data"] = [data mutableDeepCopy];
 }
 
 - (NSMutableDictionary *)references {
   id value = self.dictionary[@"references"];
-  NSMutableDictionary *references = FNMutableDictionaryFromValue(value);
 
-  if (references != value) self.dictionary[@"references"] = references;
-  return references;
+  if (!value) {
+    value = [NSMutableDictionary new];
+    self.dictionary[@"references"] = value;
+  }
+
+  return value;
 }
 
 - (void)setReferences:(NSMutableDictionary *)references {
-  self.dictionary[@"references"] = references;
+  self.dictionary[@"references"] = [references mutableDeepCopy];
 }
 
 - (FNCustomEventSet *)eventSet:(NSString *)name {
@@ -255,7 +240,7 @@ static void FNInitClassRegistry() {
 #pragma mark NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {
-  return [[self.class allocWithZone:zone] initWithDictionary:self.dictionary];
+  return [[self.class allocWithZone:zone] initWithMutableDictionary:self.dictionary];
 }
 
 #pragma mark equality
@@ -280,16 +265,6 @@ static void FNInitClassRegistry() {
 
 + (BOOL)allowNewResources {
   return NO;
-}
-
-NSMutableDictionary * FNMutableDictionaryFromValue(id value) {
-  if (!value) {
-    value = [NSMutableDictionary new];
-  } else if (![value isKindOfClass:[NSMutableDictionary class]]) {
-    value = [[NSMutableDictionary alloc] initWithDictionary:value copyItems:YES];
-  }
-
-  return value;
 }
 
 @end

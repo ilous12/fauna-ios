@@ -16,15 +16,31 @@
 //
 
 #import "FNCache.h"
+#import "FNFuture.h"
+
+NSString * const FNCacheTombstone = @"org.fauna.FNCache.Tombstone";
+
+NSError * CacheReadError() {
+  return [NSError errorWithDomain:@"org.fauna.FNCache" code:1 userInfo:@{@"msg":@"Cache read failed."}];
+}
+
+NSError * CacheWriteError() {
+  return [NSError errorWithDomain:@"org.fauna.FNCache" code:2 userInfo:@{@"msg": @"Cache write failed"}];
+}
 
 @implementation FNCache
 
-- (FNFuture *)setObject:(NSDictionary *)value forKey:(NSString *)key {
+- (FNFuture *)setObject:(NSDictionary *)value extraPaths:(NSArray *)paths timestamp:(FNTimestamp)timestamp {
   @throw @"not implemented";
 }
 
-- (FNFuture *)valueForKey:(NSString *)key {
+- (FNFuture *)removeObjectForPath:(NSString *)path timestamp:(FNTimestamp)timestamp {
+  @throw @"not implemented";
+}
+
+- (FNFuture *)objectForPath:(NSString *)path after:(FNTimestamp)after {
   @throw @"not implemented";
 }
 
 @end
+

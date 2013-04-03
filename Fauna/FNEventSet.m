@@ -15,10 +15,22 @@
 // specific language governing permissions and limitations under the License.
 //
 
-#import "FNContext.h"
 #import "FNFuture.h"
+#import "FNContext.h"
 #import "FNEventSet.h"
 #import "NSArray+FNFunctionalEnumeration.h"
+
+@interface FNEventSet ()
+
+@property (nonatomic, readonly) NSString *path;
+
+- (NSMutableDictionary *)baseParams;
+
+- (NSDictionary *)paramsWithBefore:(FNTimestamp)before after:(FNTimestamp)after count:(NSInteger)count;
+
+- (FNFuture *)mappedToPage:(FNFuture *)dictFuture;
+
+@end
 
 @implementation FNEventSet
 
@@ -27,7 +39,7 @@
 - (id)initWithRef:(NSString *)ref {
   self = [super init];
   if (self) {
-    _ref = ref;
+    _path = ref;
   }
   return self;
 }
@@ -38,12 +50,16 @@
 
 #pragma mark Public methods
 
+- (NSString *)ref {
+  return self.path;
+}
+
 - (FNFuture *)pageBefore:(FNTimestamp)before {
   return [self pageBefore:before count:-1];
 }
 
 - (FNFuture *)pageBefore:(FNTimestamp)before count:(NSInteger)count {
-  return [self eventsWithBefore:before after:-1 count:count filter:nil];
+  return [self eventsPageBefore:before after:-1 count:count];
 }
 
 - (FNFuture *)pageAfter:(FNTimestamp)after {
@@ -51,7 +67,7 @@
 }
 
 - (FNFuture *)pageAfter:(FNTimestamp)after count:(NSInteger)count {
-  return [self eventsWithBefore:-1 after:after count:count filter:nil];
+  return [self eventsPageBefore:-1 after:after count:count];
 }
 
 - (FNFuture *)createsBefore:(FNTimestamp)before {
@@ -59,7 +75,7 @@
 }
 
 - (FNFuture *)createsBefore:(FNTimestamp)before count:(NSInteger)count {
-  return [self eventsWithBefore:before after:-1 count:count filter:@"creates"];
+  return [self createsBefore:before after:-1 count:count];
 }
 
 - (FNFuture *)createsAfter:(FNTimestamp)after {
@@ -67,7 +83,7 @@
 }
 
 - (FNFuture *)createsAfter:(FNTimestamp)after count:(NSInteger)count {
-  return [self eventsWithBefore:-1 after:after count:count filter:@"creates"];
+  return [self createsBefore:-1 after:after count:count];
 }
 
 - (FNFuture *)updatesBefore:(FNTimestamp)before {
@@ -75,7 +91,7 @@
 }
 
 - (FNFuture *)updatesBefore:(FNTimestamp)before count:(NSInteger)count {
-  return [self eventsWithBefore:before after:-1 count:count filter:@"updates"];
+  return [self updatesBefore:before after:-1 count:count];
 }
 
 - (FNFuture *)updatesAfter:(FNTimestamp)after {
@@ -83,7 +99,7 @@
 }
 
 - (FNFuture *)updatesAfter:(FNTimestamp)after count:(NSInteger)count {
-  return [self eventsWithBefore:-1 after:after count:count filter:@"updates"];
+  return [self updatesBefore:-1 after:after count:count];
 }
 
 #pragma mark Private methods
@@ -92,17 +108,32 @@
   return [NSMutableDictionary new];
 }
 
-- (FNFuture *)eventsWithBefore:(FNTimestamp)before after:(FNTimestamp)after count:(NSInteger)count filter:(NSString *)filter {
-  NSString *fullRef = filter ? [self.ref stringByAppendingFormat:@"/%@", filter] : self.ref;
+- (NSDictionary *)paramsWithBefore:(FNTimestamp)before after:(FNTimestamp)after count:(NSInteger)count {
   NSMutableDictionary *params = self.baseParams;
 
   if (before > -1) params[@"before"] = FNTimestampToNSNumber(before);
   if (after > -1) params[@"after"] = FNTimestampToNSNumber(after);
   if (count > -1) params[@"size"] = @(count);
 
-  return [[FNContext get:fullRef parameters:params] map:^(NSDictionary *dict) {
+  return params;
+}
+
+- (FNFuture *)mappedToPage:(FNFuture *)dictFuture {
+  return [dictFuture map:^(NSDictionary *dict){
     return [FNEventSetPage resourceWithDictionary:dict];
   }];
+}
+
+- (FNFuture *)eventsPageBefore:(FNTimestamp)before after:(FNTimestamp)after count:(NSInteger)count {
+  return [self mappedToPage:[FNContext getEventsPage:self.path parameters:[self paramsWithBefore:before after:after count:count]]];
+}
+
+- (FNFuture *)createsBefore:(FNTimestamp)before after:(FNTimestamp)after count:(NSInteger)count {
+  return [self mappedToPage:[FNContext getCreatesPage:self.path parameters:[self paramsWithBefore:before after:after count:count]]];
+}
+
+- (FNFuture *)updatesBefore:(FNTimestamp)before after:(FNTimestamp)after count:(NSInteger)count {
+  return [self mappedToPage:[FNContext getUpdatesPage:self.path parameters:[self paramsWithBefore:before after:after count:count]]];
 }
 
 @end
@@ -119,6 +150,10 @@
   return self;
 }
 
+- (NSString *)path {
+  return @"query";
+}
+
 -(NSString *)ref {
   return [NSString stringWithFormat:@"query?query=%@", self.query];
 }
@@ -132,7 +167,7 @@
     if ([param isKindOfClass:[FNQueryEventSet class]]) {
       [ps addObject:((FNQueryEventSet *)param).query];
     } else if ([param isKindOfClass:[FNEventSet class]]) {
-      [ps addObject:[NSString stringWithFormat:@"'%@'", ((FNEventSet *)param).ref]];
+      [ps addObject:[NSString stringWithFormat:@"'%@'", ((FNEventSet *)param).path]];
     } else {
       [ps addObject:[NSString stringWithFormat:@"'%@'", param]];
     }
@@ -154,9 +189,7 @@
 }
 
 - (FNFuture *)addRef:(NSString *)ref {
-  return [[FNContext post:self.ref parameters:@{@"resource": ref}] map:^(NSDictionary *dict) {
-    return [FNResource resourceWithDictionary:dict];
-  }];
+  return [FNContext addToSet:self.path resource:ref];
 }
 
 - (FNFuture *)remove:(FNResource *)resource {
@@ -164,9 +197,7 @@
 }
 
 - (FNFuture *)removeRef:(NSString *)ref {
-  return [[FNContext delete:self.ref parameters:@{@"resource": ref}] map:^(NSDictionary *dict) {
-    return [FNResource resourceWithDictionary:dict];
-  }];
+  return [FNContext removeFromSet:self.path resource:ref];
 }
 
 @end

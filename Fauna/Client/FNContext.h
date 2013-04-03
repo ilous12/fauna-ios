@@ -15,13 +15,21 @@
 // specific language governing permissions and limitations under the License.
 //
 
+#import "FNResource.h"
+
 @class FNFuture;
+@class FNClient;
+@class FNCache;
+@class FNContextConfig;
 
 /*!
  Fauna API Context
  */
 @interface FNContext : NSObject
 
+#pragma mark properties
+@property (nonatomic, readonly) FNClient *client;
+@property (nonatomic, readonly) FNCache *cache;
 #pragma mark lifecycle
 
 /*!
@@ -67,10 +75,32 @@
 #pragma mark user masquerading
 
 /*!
- Returns a new Client that masquerades as a specific user. Only valid if this Client was initialized with a publisher key.
+ Returns a new Context that masquerades as a specific user. Only valid if this Context was initialized with a publisher key.
  @param userRef the ref of the user to masquerade as (e.g. 'users/123')
  */
 - (instancetype)asUser:(NSString *)userRef;
+
+#pragma mark default configuration
+
+/*!
+ Returns the default context configuration new Contexts are created with.
+ */
++ (FNContextConfig *)defaultConfig;
+
+/*!
+ Sets the default context configuration.
+ */
++ (void)setDefaultConfig:(FNContextConfig *)config;
+
+/*!
+ Returns the default cache size new Context's caches are created with.
+ */
++ (NSUInteger)defaultCacheSize;
+
+/*!
+ Sets the default cache size
+ */
++ (void)setDefaultCacheSize:(NSUInteger)cacheSize;
 
 #pragma mark context management
 
@@ -101,27 +131,36 @@
  */
 - (void)performInContext:(void (^)(void))block;
 
-#pragma mark HTTP requests
+#pragma mark http methods
 
-+ (FNFuture *)get:(NSString *)path
-       parameters:(NSDictionary *)parameters;
++ (FNFuture *)get:(NSString *)path parameters:(NSDictionary *)parameters;
 
-+ (FNFuture *)get:(NSString *)path;
++ (FNFuture *)post:(NSString *)path parameters:(NSDictionary *)parameters;
 
-+ (FNFuture *)post:(NSString *)path
-        parameters:(NSDictionary *)parameters;
++ (FNFuture *)put:(NSString *)path parameters:(NSDictionary *)parameters;
 
-+ (FNFuture *)post:(NSString *)path;
++ (FNFuture *)delete:(NSString *)path parameters:(NSDictionary *)parameters;
 
-+ (FNFuture *)put:(NSString *)path
-       parameters:(NSDictionary *)parameters;
 
-+ (FNFuture *)put:(NSString *)path;
++ (FNFuture *)getResource:(NSString *)path;
 
-+ (FNFuture *)delete:(NSString *)path
-          parameters:(NSDictionary *)parameters;
++ (FNFuture *)postResource:(NSString *)path parameters:(NSDictionary *)parameters;
 
-+ (FNFuture *)delete:(NSString *)path;
++ (FNFuture *)putResource:(NSString *)path parameters:(NSDictionary *)parameters;
+
++ (FNFuture *)deleteResource:(NSString *)path;
+
+
++ (FNFuture *)getEventsPage:(NSString *)path parameters:(NSDictionary *)parameters;
+
++ (FNFuture *)getCreatesPage:(NSString *)path parameters:(NSDictionary *)parameters;
+
++ (FNFuture *)getUpdatesPage:(NSString *)path parameters:(NSDictionary *)parameters;
+
++ (FNFuture *)addToSet:(NSString *)path resource:(NSString *)resource;
+
++ (FNFuture *)removeFromSet:(NSString *)path resource:(NSString *)resource;
+
 
 #pragma mark debugging
 

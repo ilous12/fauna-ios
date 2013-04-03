@@ -16,41 +16,61 @@
 //
 
 #import "FNContext.h"
+#import "FNContextConfig.h"
 #import "FNFuture.h"
 #import "FNError.h"
 #import "FNClient.h"
+#import "FNNetworkStatus.h"
 #import "FNCache.h"
 #import "FNSQLiteCache.h"
+#import "FNNullCache.h"
 #import "NSString+FNStringExtensions.h"
+#import "NSDictionary+FNFunctionalEnumeration.h"
 
 NSString * const FNFutureScopeContextKey = @"FNContext";
 
-static FNContext* _defaultContext;
+static FNContext *_defaultContext;
+
+static FNContextConfig *_defaultConfig;
+
+static FNContextConfig *DefaultDefaultConfig() {
+  static FNContextConfig *config;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    config = [FNContextConfig configWithMaxWifiAge:15 maxWWANAge:15 timeout:240 fallbackOnError:NO];
+  });
+
+  return config;
+}
+
+static NSUInteger _defaultCacheSize = 1 * 1024 * 1024;
 
 @interface FNContext ()
 
-@property (nonatomic, readonly) FNClient *client;
-@property (nonatomic, readonly) FNContext *parent;
-@property (nonatomic, readonly) FNCache *cache;
+@property (nonatomic, readonly) FNContextConfig *config;
 
 @end
 
 @implementation FNContext
 
-# pragma mark lifecycle
+#pragma mark lifecycle
 
-- (id)initWithClient:(FNClient *)client parent:(FNContext *)parent cache:(FNCache *)cache {
+- (id)initWithClient:(FNClient *)client cache:(FNCache *)cache config:(FNContextConfig *)config {
   self = [super init];
   if (self) {
     _client = client;
-    _parent = parent;
-    _cache = nil;
+    _cache = cache;
+    _config = config;
   }
   return self;
 }
 
 - (id)initWithClient:(FNClient *)client {
-  return [self initWithClient:client parent:nil cache:[FNSQLiteCache persistentCacheWithName:[client getAuthHash]]];
+  FNContextConfig *config = FNContext.defaultConfig ?: DefaultDefaultConfig();
+  FNCache *cache = FNContext.defaultCacheSize > 0 ?
+    [FNSQLiteCache cacheWithName:[client getAuthHash] maxSize:FNContext.defaultCacheSize] :
+    [FNNullCache new];
+  return [self initWithClient:client cache:cache config:config];
 }
 
 - (id)initWithKey:(NSString*)keyString {
@@ -77,7 +97,7 @@ static FNContext* _defaultContext;
   return [[self alloc] initWithPublisherEmail:email password:password];
 }
 
-# pragma mark Public methods
+#pragma mark Public methods
 
 - (instancetype)asUser:(NSString *)userRef {
   return [[self.class alloc] initWithClient:[self.client asUser:userRef]];
@@ -91,14 +111,24 @@ static FNContext* _defaultContext;
   _defaultContext = context;
 }
 
-+ (FNContext *)currentContext {
-  return self.scopedContext ?: self.defaultContext;
++ (FNContextConfig *)defaultConfig {
+  return _defaultConfig;
 }
 
-+ (FNContext *)currentOrRaise {
-  FNContext *ctx = self.currentContext;
-  if (!ctx) @throw FNContextNotDefined();
-  return ctx;
++ (void)setDefaultConfig:(FNContextConfig *)config {
+  _defaultConfig = config;
+}
+
++ (NSUInteger)defaultCacheSize {
+  return _defaultCacheSize;
+}
+
++ (void)setDefaultCacheSize:(NSUInteger)cacheSize {
+  _defaultCacheSize = cacheSize;
+}
+
++ (FNContext *)currentContext {
+  return self.scopedContext ?: self.defaultContext;
 }
 
 - (id)inContext:(id (^)(void))block {
@@ -121,82 +151,165 @@ static FNContext* _defaultContext;
   }
 }
 
-- (id)transient:(id (^)(void))block {
-  FNContext *child = [[FNContext alloc] initWithClient:self.client parent:self cache:[FNSQLiteCache volatileCache]];
-  return [child inContext:block];
-}
-
-+ (FNFuture *)get:(NSString *)path
-       parameters:(NSDictionary *)parameters {
-  FNContext *context = self.currentOrRaise;
-
-  return [[context.client get:path parameters:parameters] flatMap:^(FNResponse *res){
-    return [[context cacheResource:res.resource references:res.references] map_:^{
-      return res.resource;
-    }];
-  }];
-}
-
-+ (FNFuture *)get:(NSString *)path {
-  return [self get:path parameters:nil];
-}
-
-+ (FNFuture *)post:(NSString *)path
-        parameters:(NSDictionary *)parameters {
-  FNContext* context = self.currentOrRaise;
-
-  return [[context.client post:path parameters:parameters] flatMap:^(FNResponse *res) {
-    return [[context cacheResource:res.resource references:res.references] map_:^{
-      return res.resource;
-    }];
-  }];
-}
-
-+ (FNFuture *)post:(NSString *)path {
-  return [self post:path parameters:nil];
-}
-
-+ (FNFuture *)put:(NSString *)path
-       parameters:(NSDictionary *)parameters {
-  FNContext *context = self.currentOrRaise;
-
-  return [[context.client put:path parameters:parameters] flatMap:^(FNResponse *res) {
-    return [[context cacheResource:res.resource references:res.references] map_:^{
-      return res.resource;
-    }];
-  }];
-}
-
-+ (FNFuture *)put:(NSString *)path {
-  return [self put:path parameters:nil];
-}
-
-+ (FNFuture *)delete:(NSString *)path
-          parameters:(NSDictionary *)parameters {
-  FNContext *context = self.currentOrRaise;
-
-  return [[context.client delete:path parameters:parameters] flatMap:^(FNResponse *res) {
-    return [[context cacheResource:@{@"ref": path, @"deleted": @YES} references:@{}] map_:^{
-      return @{};
-    }];
-  }];
-}
-
-+ (FNFuture *)delete:(NSString *)path {
-  return [self delete:path parameters:nil];
-}
-
 - (void)setLogHTTPTraffic:(BOOL)log {
   self.client.logHTTPTraffic = log;
 }
 
-#pragma equality
+#pragma mark equality
 
 - (BOOL)isEquivalentToContext:(FNContext *)context {
   return self == context || (context && [self.client isEqualToClient:context.client]);
 }
 
-# pragma mark Private methods
+#pragma mark HTTP methods
+
++ (FNFuture *)get:(NSString *)path parameters:(NSDictionary *)parameters {
+  FNContext *ctx = self.currentOrRaise;
+  return [ctx.client get:path parameters:parameters timeout:ctx.config.requestTimeout];
+}
+
++ (FNFuture *)post:(NSString *)path parameters:(NSDictionary *)parameters {
+  FNContext *ctx = self.currentOrRaise;
+  return [ctx.client post:path parameters:parameters timeout:ctx.config.requestTimeout];
+}
+
++ (FNFuture *)put:(NSString *)path parameters:(NSDictionary *)parameters {
+  FNContext *ctx = self.currentOrRaise;
+  return [ctx.client put:path parameters:parameters timeout:ctx.config.requestTimeout];
+}
+
++ (FNFuture *)delete:(NSString *)path parameters:(NSDictionary *)parameters {
+  FNContext *ctx = self.currentOrRaise;
+  return [ctx.client delete:path parameters:parameters timeout:ctx.config.requestTimeout];
+}
+
+#pragma mark caching helpers
+
+static FNFuture * CacheReferences(FNCache *cache, FNTimestamp time, FNFuture *response) {
+  return [response flatMap:^(FNResponse *res) {
+    return [FNFutureJoin([res.references map:^(NSString *ref, NSDictionary *resource) {
+      return [cache setObject:resource extraPaths:@[] timestamp:time];
+    }]) map_:^{
+      return res;
+    }];
+  }];
+}
+
+static FNFuture * CacheResourceResponse(FNCache *cache, NSArray *paths, FNTimestamp time, FNFuture *response) {
+  return [[CacheReferences(cache, time, response) flatMap:^(FNResponse *res) {
+    return [[cache setObject:res.resource extraPaths:paths timestamp:time] map_:^{ return res.resource; }];
+  }] rescue:^(NSError *error) {
+    if (error.isFNNotFound) {
+      return paths.count > 0 ? [cache removeObjectForPath:paths[0] timestamp:time].done : [FNFuture value:nil];
+    } else {
+      return [FNFuture error:error];
+    }
+  }];
+}
+
+static FNFuture * CacheEventsPageResponse(FNCache *cache, FNTimestamp time, FNFuture *response) {
+  return CacheReferences(cache, time, response);
+}
+
+static FNFuture * CacheCreatesPageResponse(FNCache *cache, FNTimestamp time, FNFuture *response) {
+  return CacheReferences(cache, time, response);
+}
+
+static FNFuture * CacheUpdatesPageResponse(FNCache *cache, FNTimestamp time, FNFuture *response) {
+  return CacheReferences(cache, time, response);
+}
+
+#pragma mark caching Resource methods
+
++ (FNFuture *)getResource:(NSString *)path {
+  FNContext *ctx = self.currentOrRaise;
+  FNTimestamp now = FNNow();
+  NSTimeInterval maxAge = [ctx.config maxAgeForReachabilityStatus:ctx.client.reachabilityStatus];
+  FNTimestamp threshold = FNTimestampSubtractInterval(now, maxAge);
+
+  return [[ctx.cache objectForPath:path after:threshold] flatMap:^(id value) {
+    if (value) {
+      return [FNFuture value:(value == FNCacheTombstone ? nil : value)];
+    } else {
+      return [CacheResourceResponse(ctx.cache, @[path], now, [self get:path parameters:@{}]) rescue:^(NSError *error){
+        if (ctx.config.fallbackOnError && (error.isFNRequestTimeout || error.isFNInternalServerError)) {
+          return [[ctx.cache objectForPath:path after:FNFirst] flatMap:^(id value){
+            return value ? [FNFuture value:(value == FNCacheTombstone ? nil : value)] : [FNFuture error:error];
+          }];
+        } else {
+          return [FNFuture error:error];
+        }
+      }];
+    }
+  }];
+}
+
++ (FNFuture *)postResource:(NSString *)path parameters:(NSDictionary *)parameters {
+  FNContext *ctx = self.currentOrRaise;
+  return CacheResourceResponse(ctx.cache, @[], FNNow(), [self post:path parameters:parameters]);
+}
+
++ (FNFuture *)putResource:(NSString *)path parameters:(NSDictionary *)parameters {
+  FNContext *ctx = self.currentOrRaise;
+  return CacheResourceResponse(ctx.cache, @[path], FNNow(), [self put:path parameters:parameters]);
+}
+
++ (FNFuture *)deleteResource:(NSString *)path {
+  FNContext *ctx = self.currentOrRaise;
+  return [[self delete:path parameters:@{}] flatMap:^(FNResponse *res) {
+    return [[ctx.cache removeObjectForPath:path timestamp:FNNow()] map_:^{ return res.resource; }];
+  }];
+}
+
+#pragma mark caching Set methods
+
++ (FNFuture *)getEventsPage:(NSString *)path parameters:(NSDictionary *)parameters {
+  FNContext *ctx = self.currentOrRaise;
+  FNFuture *get = [self get:path parameters:parameters];
+  return [CacheEventsPageResponse(ctx.cache, FNNow(), get) map:^(FNResponse *res){
+    return res.resource;
+  }];
+}
+
++ (FNFuture *)getCreatesPage:(NSString *)path parameters:(NSDictionary *)parameters {
+  FNContext *ctx = self.currentOrRaise;
+  FNFuture *get = [self get:[path stringByAppendingString:@"/creates"] parameters:parameters];
+  return [CacheCreatesPageResponse(ctx.cache, FNNow(), get) map:^(FNResponse *res){
+    return res.resource;
+  }];
+}
+
++ (FNFuture *)getUpdatesPage:(NSString *)path parameters:(NSDictionary *)parameters {
+  FNContext *ctx = self.currentOrRaise;
+  FNFuture *get = [self get:[path stringByAppendingString:@"/updates"] parameters:parameters];
+  return [CacheUpdatesPageResponse(ctx.cache, FNNow(), get) map:^(FNResponse *res){
+    return res.resource;
+  }];
+}
+
++ (FNFuture *)addToSet:(NSString *)path resource:(NSString *)resource {
+  FNContext *ctx = self.currentOrRaise;
+  FNFuture *add = [self post:path parameters:@{@"resource": resource}];
+  return [CacheEventsPageResponse(ctx.cache, FNNow(), add) map:^(FNResponse *res){
+    return res.resource;
+  }];
+}
+
++ (FNFuture *)removeFromSet:(NSString *)path resource:(NSString *)resource {
+  FNContext *ctx = self.currentOrRaise;
+  FNFuture *remove = [self delete:path parameters:@{@"resource": resource}];
+  return [CacheEventsPageResponse(ctx.cache, FNNow(), remove) map:^(FNResponse *res){
+    return res.resource;
+  }];
+}
+
+#pragma mark Private methods
+
++ (FNContext *)currentOrRaise {
+  FNContext *ctx = self.currentContext;
+  if (!ctx) @throw FNContextNotDefined();
+  return ctx;
+}
 
 + (FNContext *)scopedContext {
   return FNFuture.currentScope[FNFutureScopeContextKey];
@@ -210,32 +323,6 @@ static FNContext* _defaultContext;
   } else {
     [scope removeObjectForKey:FNFutureScopeContextKey];
   }
-}
-
-# pragma mark Private cache methods
-
-- (FNFuture *)cachedResourceForRef:(NSString *)ref {
-  return [self.cache valueForKey:ref];
-}
-
-- (FNFuture *)cacheResource:(NSDictionary *)resource references:(NSDictionary *)references {
-  if (!self.cache) return [FNFuture value:nil];
-
-  NSMutableArray *futures = [[NSMutableArray alloc] initWithCapacity:(references.count + 2)];
-
-  if (resource && resource[@"ref"]) {
-    [futures addObject:[self.cache setObject:resource forKey:resource[@"ref"]]];
-  }
-
-  [references enumerateKeysAndObjectsUsingBlock:^(NSString *ref, NSDictionary *resource, BOOL *stop) {
-    [futures addObject:[self.cache setObject:resource forKey:ref]];
-  }];
-
-  if (self.parent) {
-    [futures addObject:[self.parent cacheResource:resource references:references]];
-  }
-
-  return FNFutureJoin(futures);
 }
 
 @end

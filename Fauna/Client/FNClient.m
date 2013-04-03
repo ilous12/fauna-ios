@@ -26,18 +26,24 @@
 
 #import <CommonCrypto/CommonDigest.h>
 
-#define API_VERSION @"v1"
+#ifndef FAUNA_API_VERSION
+#define FAUNA_API_VERSION @"v1"
+#endif
 
-NSString * const FaunaAPIVersion = API_VERSION;
-NSString * const FaunaAPIBaseURL = @"https://rest.fauna.org";
-NSString * const FaunaAPIBaseURLWithVersion = @"https://rest.fauna.org/" API_VERSION @"/";
+#ifndef FAUNA_API_HOST
+#define FAUNA_API_HOST @"rest.fauna.org"
+#endif
+
+NSString * const FaunaAPIVersion = FAUNA_API_VERSION;
+NSString * const FaunaAPIHost = FAUNA_API_HOST;
+NSString * const FaunaAPIBaseURL = @"https://" FAUNA_API_HOST;
+NSString * const FaunaAPIBaseURLWithVersion = @"https://" FAUNA_API_HOST @"/" FAUNA_API_VERSION @"/";
 
 @implementation FNResponse
 
 - (id)initWithResource:(NSDictionary *)resource references:(NSDictionary *)references {
   self = [super init];
   if (self) {
-    [FNNetworkStatus start];
     _resource = resource ?: @{};
     _references = references ?: @{};
   }
@@ -61,6 +67,7 @@ NSString * const FaunaAPIBaseURLWithVersion = @"https://rest.fauna.org/" API_VER
 - (id)initWithAuthString:(NSString *)authString {
   self = [super init];
   if (self) {
+    [FNNetworkStatus start];
     _authString = authString;
     _authHeaderValue = [@"Basic " stringByAppendingString:authString.base64Encoded];
 
@@ -94,36 +101,24 @@ NSString * const FaunaAPIBaseURLWithVersion = @"https://rest.fauna.org/" API_VER
   return [[self.class alloc] initWithKey:self.authString asUser:userRef];
 }
 
-- (FNFuture *)get:(NSString *)path parameters:(NSDictionary *)parameters {
-  return [self performRequestWithMethod:@"GET" path:path parameters:parameters];
+- (FNReachabilityStatus)reachabilityStatus {
+  return FNNetworkStatus.status;
 }
 
-- (FNFuture *)get:(NSString *)path {
-  return [self get:path parameters:nil];
+- (FNFuture *)get:(NSString *)path parameters:(NSDictionary *)parameters timeout:(NSTimeInterval)timeout {
+  return [self performRequestWithMethod:@"GET" path:path parameters:parameters timeout:timeout];
 }
 
-- (FNFuture *)post:(NSString *)path parameters:(NSDictionary *)parameters {
-  return [self performRequestWithMethod:@"POST" path:path parameters:parameters];
+- (FNFuture *)post:(NSString *)path parameters:(NSDictionary *)parameters timeout:(NSTimeInterval)timeout {
+  return [self performRequestWithMethod:@"POST" path:path parameters:parameters timeout:timeout];
 }
 
-- (FNFuture *)post:(NSString *)path {
-  return [self post:path parameters:nil];
+- (FNFuture *)put:(NSString *)path parameters:(NSDictionary *)parameters timeout:(NSTimeInterval)timeout {
+  return [self performRequestWithMethod:@"PUT" path:path parameters:parameters timeout:timeout];
 }
 
-- (FNFuture *)put:(NSString *)path parameters:(NSDictionary *)parameters {
-  return [self performRequestWithMethod:@"PUT" path:path parameters:parameters];
-}
-
-- (FNFuture *)put:(NSString *)path {
-  return [self put:path parameters:nil];
-}
-
-- (FNFuture *)delete:(NSString *)path parameters:(NSDictionary *)parameters {
-  return [self performRequestWithMethod:@"DELETE" path:path parameters:parameters];
-}
-
-- (FNFuture *)delete:(NSString *)path {
-  return [self delete:path parameters:nil];
+- (FNFuture *)delete:(NSString *)path parameters:(NSDictionary *)parameters timeout:(NSTimeInterval)timeout {
+  return [self performRequestWithMethod:@"DELETE" path:path parameters:parameters timeout:timeout];
 }
 
 #pragma mark equality
@@ -148,8 +143,18 @@ NSString * const FaunaAPIBaseURLWithVersion = @"https://rest.fauna.org/" API_VER
 
 - (FNFuture *)performRequestWithMethod:(NSString *)method
                                              path:(NSString *)path
-                                       parameters:(NSDictionary *)parameters {
-  NSMutableURLRequest *req = [self.class requestWithMethod:method path:path parameters:parameters];
+                                       parameters:(NSDictionary *)parameters
+                                          timeout:(NSTimeInterval)timeout {
+
+  // Fail fast if we are not online.
+  if (!FNNetworkStatus.isOnline) {
+    return [FNFuture error:FNRequestTimeout()];
+  }
+
+  NSMutableURLRequest *req = [self.class requestWithMethod:method
+                                                      path:path
+                                                parameters:parameters
+                                                   timeout:timeout];
 
   [req setValue:self.authHeaderValue forHTTPHeaderField:@"Authorization"];
   if (self.traceID) [req setValue:self.traceID forHTTPHeaderField:@"X-TRACE-ID"];
@@ -196,12 +201,14 @@ NSString * const FaunaAPIBaseURLWithVersion = @"https://rest.fauna.org/" API_VER
 
 + (NSMutableURLRequest *)requestWithMethod:(NSString *)method
                                       path:(NSString *)path
-                                parameters:(NSDictionary *)parameters {
+                                parameters:(NSDictionary *)parameters
+                                   timeout:(NSTimeInterval)timeout {
 
   NSURL *url = [NSURL URLWithString:path relativeToURL:self.baseURL];
 
   NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
   req.HTTPMethod = method;
+  req.timeoutInterval = timeout;
 
   [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 
