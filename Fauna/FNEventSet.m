@@ -98,7 +98,7 @@
 
   if (before > -1) params[@"before"] = FNTimestampToNSNumber(before);
   if (after > -1) params[@"after"] = FNTimestampToNSNumber(after);
-  if (count > -1) params[@"count"] = @(count);
+  if (count > -1) params[@"size"] = @(count);
 
   return [[FNContext get:fullRef parameters:params] map:^(NSDictionary *dict) {
     return [FNEventSetPage resourceWithDictionary:dict];
