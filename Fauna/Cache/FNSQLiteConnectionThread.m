@@ -1,5 +1,5 @@
 //
-// FNSQLiteCache.h
+// FNSQLiteConnectionThread.m
 //
 // Copyright (c) 2013 Fauna, Inc.
 //
@@ -13,6 +13,7 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
+//
 
 #import <sqlite3.h>
 #import "FNError.h"
