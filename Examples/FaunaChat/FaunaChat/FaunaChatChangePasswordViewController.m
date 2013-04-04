@@ -38,7 +38,7 @@
     [SVProgressHUD dismiss];
 
     //Set the default context to log out the user.
-    FNContext.defaultContext = FaunaChatClientKeyContext();
+    [FaunaChatUser signOut];
 
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle:@"Password Changed!"

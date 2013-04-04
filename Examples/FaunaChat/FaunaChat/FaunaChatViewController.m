@@ -62,14 +62,13 @@
 }
 
 - (void)logoutAction:(id)sender {
-  FNContext.defaultContext = FaunaChatClientKeyContext();
+  [FNUser signOut];
   [self refreshUI];
 }
 
 - (void)refreshUI {
-  BOOL userIsAuthenticated = FNContext.defaultContext != FaunaChatClientKeyContext();
   for (UIButton *view in @[self.btnChatRoom, self.btnChangePassword, self.btnLogout]) {
-    view.enabled = userIsAuthenticated;
+    view.enabled = FNUser.isSignedIn;
   }
 }
 

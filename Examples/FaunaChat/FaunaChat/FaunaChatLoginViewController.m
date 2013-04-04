@@ -32,9 +32,8 @@
   NSString* email = self.emailField.text;
   NSString* password = self.passwordField.text;
 
-  [[FaunaChatUser contextForEmail:email password:password] onSuccess:^(FNContext *userCtx) {
-    FNContext.defaultContext = userCtx;
-    FNContext.defaultContext.logHTTPTraffic = YES;
+  [[FaunaChatUser signInWithEmail:email password:password] onSuccess:^(id __unused _) {
+    FNContext.currentContext.logHTTPTraffic = YES;
 
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Success"
                                                      message:[NSString stringWithFormat:@"Welcome to FaunaChat!"]
@@ -55,7 +54,7 @@
 }
 
 - (void)alertViewCancel:(UIAlertView *)alertView {
-  
+
 }
 
 

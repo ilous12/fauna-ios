@@ -18,23 +18,20 @@
 #import "FNInstance.h"
 
 @class FNFuture;
+@class FNContext;
 
 @interface FNUser : FNInstance
-
-/*!
- Retrieve the current user, if applicable to the current context.
- */
-+ (FNFuture *)getSelf;
-
-/*!
- Retrieve the current user's configuration resource, if applicable to the current context.
- */
-+ (FNFuture *)getSelfConfig;
 
 /*!
  Change the current user's password.
  */
 + (FNFuture *)changeSelfPassword:(NSString *)oldPassword newPassword:(NSString *)newPassword confirmation:(NSString *)confirmation;
+
+/*!
+ Returns a future containing @YES if a user exists with the given email, or @NO otherwise.
+ @param email the email to test
+ */
++ (FNFuture *)emailPresence:(NSString *)email;
 
 /*!
  Returns an authentication token for a user identified by email and password. The token may be used to construct an a FNContext to make requests on behalf of the user.
@@ -79,10 +76,50 @@
 + (FNFuture *)contextForRef:(NSString *)ref password:(NSString *)password;
 
 /*!
- Returns a future containing @YES if a user exists with the given email, or @NO otherwise.
- @param email the email to test
+ Returns the current signed in user context if present.
  */
-+ (FNFuture *)emailPresence:(NSString *)email;
++ (FNContext *)signedInContext;
+
+/*!
+ Returns whether or not signedInContext is set.
+*/
++ (BOOL)isSignedIn;
+
+/*!
+ Returns the current signed in user if present.
+ */
+//+ (FNUser *)signedInUser;
+
+/*!
+ Returns the current signed in user's config if present.
+ */
+//+ (FNResource *)signedInUserConfig;
+
+/*!
+ Sign in as a user identified by email and password, and set the global signedInContext
+ @param email the user's email
+ @param password the user's password
+ */
++ (FNFuture *)signInWithEmail:(NSString *)email password:(NSString *)password;
+
+/*!
+ Sign in as a user identified by unique_id and password, and set the global signedInContext
+ @param uniqueID the user's unique_id
+ @param password the user's password
+ */
++ (FNFuture *)signInWithUniqueID:(NSString *)uniqueID password:(NSString *)password;
+
+/*!
+ Sign in as a user identified by ref and password, and set the global signedInContext
+ @param ref the user's ref
+ @param password the user's password
+ */
++ (FNFuture *)signInWithRef:(NSString *)ref password:(NSString *)password;
+
+/*!
+ Clear the global signedInContext.
+ */
++ (void)signOut;
 
 /*!
  Set a new user's email. Set on a new user in order to create with an email address.

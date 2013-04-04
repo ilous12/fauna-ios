@@ -16,24 +16,24 @@
 //
 
 #import "FNFuture.h"
-#import "FNUser.h"
 #import "FNContext.h"
 #import "FNError.h"
 #import "NSString+FNStringExtensions.h"
 #import "FNClient.h"
+#import "FNUser.h"
+
+@interface FNContext ()
+
++ (FNContext *)signedInUserContext;
+
++ (void)setSignedInUserToken:(NSString *)token;
+
+@end
 
 @implementation FNUser
 
 + (NSString *)faunaClass {
   return @"users";
-}
-
-+ (FNFuture *)getSelf {
-  return [FNResource get:@"users/self"];
-}
-
-+ (FNFuture *)getSelfConfig {
-  return [FNResource get:@"users/self/config"];
 }
 
 + (FNFuture *)changeSelfPassword:(NSString *)password newPassword:(NSString *)newPassword confirmation:(NSString *)confirmation {
@@ -44,6 +44,19 @@
   };
 
   return [FNContext put:@"users/self/config/password" parameters:params].done;
+}
+
++ (FNFuture *)emailPresence:(NSString *)email {
+  NSString *path = [NSString stringWithFormat:@"users/email/%@/presence", [email urlEscapedWithEncoding:NSUTF8StringEncoding]];
+  return [[FNContext get:path parameters:@{}] transform:^(FNFuture *result) {
+    if (!result.isError) {
+      return [FNFuture value:@YES];
+    } else if (result.isError && result.error.isFNNotFound) {
+      return [FNFuture value:@NO];
+    } else {
+      return result;
+    }
+  }];
 }
 
 + (FNFuture *)tokenForEmail:(NSString *)email password:(NSString *)password {
@@ -82,17 +95,37 @@
   }];
 }
 
-+ (FNFuture *)emailPresence:(NSString *)email {
-  NSString *path = [NSString stringWithFormat:@"users/email/%@/presence", [email urlEscapedWithEncoding:NSUTF8StringEncoding]];
-  return [[FNContext get:path parameters:@{}] transform:^(FNFuture *result) {
-    if (!result.isError) {
-      return [FNFuture value:@YES];
-    } else if (result.isError && result.error.isFNNotFound) {
-      return [FNFuture value:@NO];
-    } else {
-      return result;
-    }
++ (FNContext *)signedInContext {
+  return FNContext.signedInUserContext;
+}
+
++ (BOOL)isSignedIn {
+  return self.signedInContext != nil;
+}
+
++ (FNFuture *)signInWithEmail:(NSString *)email password:(NSString *)password {
+  return [[self tokenForEmail:email password:password] map:^id(NSString *token) {
+    FNContext.signedInUserToken = token;
+    return nil;
   }];
+}
+
++ (FNFuture *)signInWithUniqueID:(NSString *)uniqueID password:(NSString *)password {
+  return [[self tokenForUniqueID:uniqueID password:password] map:^id(NSString *token) {
+    FNContext.signedInUserToken = token;
+    return nil;
+  }];
+}
+
++ (FNFuture *)signInWithRef:(NSString *)ref password:(NSString *)password {
+  return [[self tokenForRef:ref password:password] map:^id(NSString *token) {
+    FNContext.signedInUserToken = token;
+    return nil;
+  }];
+}
+
++ (void)signOut {
+FNContext.signedInUserToken = nil;
 }
 
 - (void)setEmail:(NSString *)email {

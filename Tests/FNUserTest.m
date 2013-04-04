@@ -37,53 +37,77 @@
   [self waitForStatus:kGHUnitWaitStatusSuccess timeout:2.0];
 }
 
-- (void)testSelf {
+- (void)testSignIn {
   [self prepare];
 
-  [TestClientContext() performInContext:^{
-    FNUser *user = [FNUser new];
-    user.uniqueID = TestUniqueID();
-    user.password = @"sekrit";
+  FNContext.defaultContext = TestClientContext();
 
-    [[[[user save] flatMap:^(FNUser *user) {
-      return [FNUser contextForUniqueID:user.uniqueID password:@"sekrit"];
-    }] flatMap:^(FNContext *ctx) {
-      return [ctx inContext:^{
-        return [FNUser getSelf];
+  FNUser *user = [FNUser new];
+  user.uniqueID = TestUniqueID();
+  user.password = @"sekrit";
+
+  [[user save] onSuccess:^(FNUser *user) {
+    [[FNUser signInWithUniqueID:user.uniqueID password:@"sekrit"] onSuccess:^(id __unused _) {
+      [[FNUser get:@"users/self"] onSuccess:^(FNUser *selfUser) {
+        if ([user.ref isEqualToString:selfUser.ref]) {
+          [FNUser signOut];
+          FNContext.defaultContext = nil;
+          [self notify:kGHUnitWaitStatusSuccess forSelector:@selector(testSignIn)];
+        }
       }];
-    }] onSuccess:^(FNUser *selfUser) {
-      if ([selfUser.uniqueID isEqualToString:user.uniqueID]) {
-        [self notify:kGHUnitWaitStatusSuccess forSelector:@selector(testSelf)];
-      }
     }];
   }];
 
   [self waitForStatus:kGHUnitWaitStatusSuccess timeout:2.0];
 }
 
-- (void)testConfig {
-  [self prepare];
+// - (void)testSelf {
+//   [self prepare];
 
-  [TestClientContext() performInContext:^{
-    FNUser *user = [FNUser new];
-    NSString *email = TestUniqueEmail();
-    user.email = email;
-    user.password = @"sekrit";
+//   [TestClientContext() performInContext:^{
+//     FNUser *user = [FNUser new];
+//     user.uniqueID = TestUniqueID();
+//     user.password = @"sekrit";
 
-    [[[[user save] flatMap:^(FNUser *user) {
-      return [FNUser contextForEmail:email password:@"sekrit"];
-    }] flatMap:^(FNContext *ctx) {
-      return [ctx inContext:^{
-        return [FNUser getSelfConfig];
-      }];
-    }] onSuccess:^(FNResource *config) {
-      if ([config.dictionary[@"email"] isEqualToString:email]) {
-        [self notify:kGHUnitWaitStatusSuccess forSelector:@selector(testConfig)];
-      }
-    }];
-  }];
+//     [[[[user save] flatMap:^(FNUser *user) {
+//       return [FNUser contextForUniqueID:user.uniqueID password:@"sekrit"];
+//     }] flatMap:^(FNContext *ctx) {
+//       return [ctx inContext:^{
+//         return [FNUser getSelf];
+//       }];
+//     }] onSuccess:^(FNUser *selfUser) {
+//       if ([selfUser.uniqueID isEqualToString:user.uniqueID]) {
+//         [self notify:kGHUnitWaitStatusSuccess forSelector:@selector(testSelf)];
+//       }
+//     }];
+//   }];
 
-  [self waitForStatus:kGHUnitWaitStatusSuccess timeout:2.0];
-}
+//   [self waitForStatus:kGHUnitWaitStatusSuccess timeout:2.0];
+// }
+
+// - (void)testConfig {
+//   [self prepare];
+
+//   [TestClientContext() performInContext:^{
+//     FNUser *user = [FNUser new];
+//     NSString *email = TestUniqueEmail();
+//     user.email = email;
+//     user.password = @"sekrit";
+
+//     [[[[user save] flatMap:^(FNUser *user) {
+//       return [FNUser contextForEmail:email password:@"sekrit"];
+//     }] flatMap:^(FNContext *ctx) {
+//       return [ctx inContext:^{
+//         return [FNUser getSelfConfig];
+//       }];
+//     }] onSuccess:^(FNResource *config) {
+//       if ([config.dictionary[@"email"] isEqualToString:email]) {
+//         [self notify:kGHUnitWaitStatusSuccess forSelector:@selector(testConfig)];
+//       }
+//     }];
+//   }];
+
+//   [self waitForStatus:kGHUnitWaitStatusSuccess timeout:2.0];
+// }
 
 @end

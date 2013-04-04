@@ -29,7 +29,11 @@
 
 NSString * const FNFutureScopeContextKey = @"FNContext";
 
+static NSString * const FNContextSignedInUserTokenKey = @"org.fauna.FNContext.signedInUserToken";
+
 static FNContext *_defaultContext;
+
+static FNContext *_signedInUserContext;
 
 static FNContextConfig *_defaultConfig;
 
@@ -111,6 +115,39 @@ static NSUInteger _defaultCacheSize = 1 * 1024 * 1024;
   _defaultContext = context;
 }
 
++ (FNContext *)signedInUserContext {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+  @synchronized (self) {
+    if (!_signedInUserContext) {
+      NSString *token = [defaults objectForKey:FNContextSignedInUserTokenKey];
+      _signedInUserContext = token ? (id)[FNContext contextWithKey:token] : (id)[NSNull null];
+    }
+
+    return (id)_signedInUserContext == (id)[NSNull null] ? nil : _signedInUserContext;
+  }
+}
+
++ (void)setSignedInUserToken:(NSString *)token {
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+  @synchronized (self) {
+    if (token) {
+      [defaults setObject:token forKey:FNContextSignedInUserTokenKey];
+    } else {
+      [defaults removeObjectForKey:FNContextSignedInUserTokenKey];
+    }
+
+    _signedInUserContext = nil;
+  }
+}
+
++ (void)setSignedInUserContext:(FNContext *)ctx {
+  @synchronized (self) {
+    _signedInUserContext = ctx;
+  }
+}
+
 + (FNContextConfig *)defaultConfig {
   return _defaultConfig;
 }
@@ -128,7 +165,7 @@ static NSUInteger _defaultCacheSize = 1 * 1024 * 1024;
 }
 
 + (FNContext *)currentContext {
-  return self.scopedContext ?: self.defaultContext;
+  return self.scopedContext ?: self.signedInUserContext ?: self.defaultContext;
 }
 
 - (id)inContext:(id (^)(void))block {
