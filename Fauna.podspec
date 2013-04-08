@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Fauna/{Future,Cache,Client}/*.h', 'Fauna/*.h', 'Fauna/Categories/NSThread+FNFutureOperations.h'
 
   s.frameworks  = 'SystemConfiguration'
-  s.libraries = 'libsqlite3'
+  s.libraries = 'sqlite3'
 
   s.requires_arc = true
 end
