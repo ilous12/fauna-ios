@@ -15,6 +15,8 @@
 // specific language governing permissions and limitations under the License.
 //
 
+#import <Foundation/Foundation.h>
+
 typedef int64_t FNTimestamp;
 FOUNDATION_EXPORT FNTimestamp const FNTimestampMax;
 FOUNDATION_EXPORT FNTimestamp const FNTimestampMin;

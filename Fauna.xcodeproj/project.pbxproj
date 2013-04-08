@@ -129,7 +129,6 @@
 /* Begin PBXFileReference section */
 		074CF7901678713F00686606 /* libFauna.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFauna.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		074CF7931678713F00686606 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		074CF7971678713F00686606 /* Fauna-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Fauna-Prefix.pch"; sourceTree = "<group>"; };
 		074CF7981678713F00686606 /* Fauna.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fauna.h; sourceTree = "<group>"; };
 		075959F716C167FD00426133 /* FNContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNContext.h; sourceTree = "<group>"; };
 		075959F816C167FD00426133 /* FNContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNContext.m; sourceTree = "<group>"; };
@@ -295,19 +294,10 @@
 				07D9FFA916DF34E100D6173F /* FNUser.m */,
 				AC30BDDE16F3F63B00B47081 /* FNPublisher.h */,
 				AC30BDDF16F3F63B00B47081 /* FNPublisher.m */,
-				074CF7961678713F00686606 /* Supporting Files */,
 				AC59B2AB16F8FC4600026D37 /* FNEventSet.h */,
 				AC59B2AC16F8FC4600026D37 /* FNEventSet.m */,
 			);
 			path = Fauna;
-			sourceTree = "<group>";
-		};
-		074CF7961678713F00686606 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				074CF7971678713F00686606 /* Fauna-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		07603C3016A6445300A9A885 /* Client */ = {
@@ -648,8 +638,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/Fauna.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Fauna/Fauna-Prefix.pch";
 				GCC_VERSION = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -662,8 +650,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/Fauna.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Fauna/Fauna-Prefix.pch";
 				GCC_VERSION = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

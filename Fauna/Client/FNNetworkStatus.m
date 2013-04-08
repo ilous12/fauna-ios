@@ -37,7 +37,7 @@ static void FNNetworkStatusCallback(SCNetworkReachabilityRef target, SCNetworkRe
 + (void)start {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    LOG(@"FNNetworkStatus started.");
+    NSLog(@"FNNetworkStatus started.");
 
     reachabilityRef = SCNetworkReachabilityCreateWithName(NULL, [FaunaAPIHost UTF8String]);
 
@@ -68,7 +68,7 @@ static void FNNetworkStatusCallback(SCNetworkReachabilityRef target, SCNetworkRe
   int prev = _status;
   int status = FNReachabilityOffline;
 
-  LOG(@"Network Reachability flags: %c%c %c%c%c%c%c%c%c\n",
+  NSLog(@"Network Reachability flags: %c%c %c%c%c%c%c%c%c\n",
       (flags & kSCNetworkReachabilityFlagsIsWWAN)				  ? 'W' : '-',
       (flags & kSCNetworkReachabilityFlagsReachable)            ? 'R' : '-',
 
@@ -107,7 +107,7 @@ static void FNNetworkStatusCallback(SCNetworkReachabilityRef target, SCNetworkRe
     if (prev == FNReachabilityOffline || status == FNReachabilityOffline) [self didChangeValueForKey:@"isOnline"];
     if (prev == FNReachabilityWWAN || status == FNReachabilityWWAN) [self didChangeValueForKey:@"isWWAN"];
 
-    LOG(@"Network Reachability: %@", status == FNReachabilityOffline ? @"Offline" : (status == FNReachabilityWifi ? @"Wifi" : @"WWAN"));
+    NSLog(@"Network Reachability: %@", status == FNReachabilityOffline ? @"Offline" : (status == FNReachabilityWifi ? @"Wifi" : @"WWAN"));
   }
 }
 

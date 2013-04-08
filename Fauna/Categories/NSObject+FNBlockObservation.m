@@ -95,7 +95,7 @@ static dispatch_queue_t FNObserverMutationQueueCreatingIfNecessary() {
     NSMutableDictionary *observationDictionary = objc_getAssociatedObject(self, &FNObserverMapKey);
     FNObserverTrampoline *trampoline = [observationDictionary objectForKey:token];
     if (!trampoline) {
-      LOG(@"[NSObject(FNBlockObservation) removeObserverWithBlockToken]: Ignoring attempt to remove non-existent observer on %@ for token %@.", self, token);
+      NSLog(@"[NSObject(FNBlockObservation) removeObserverWithBlockToken]: Ignoring attempt to remove non-existent observer on %@ for token %@.", self, token);
       return;
     }
     [trampoline cancelObservation];

@@ -15,8 +15,7 @@
 // specific language governing permissions and limitations under the License.
 //
 
-#ifndef FNError_h
-#define FNError_h
+#import <Foundation/Foundation.h>
 
 FOUNDATION_EXPORT NSString * const FNErrorDomain;
 
@@ -62,5 +61,3 @@ NSException * FNInvalidResourceClass(NSString *format, ...);
 - (BOOL)isFNInternalServerError;
 
 @end
-
-#endif

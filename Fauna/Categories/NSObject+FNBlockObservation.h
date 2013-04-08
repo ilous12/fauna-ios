@@ -7,6 +7,8 @@
 //  Public domain because I love you. Let me know how you use it.
 //
 
+#import <Foundation/Foundation.h>
+
 typedef NSString FNBlockToken;
 typedef void (^FNBlockTask)(id obj, NSDictionary *change);
 
