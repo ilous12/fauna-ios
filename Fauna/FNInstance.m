@@ -32,7 +32,7 @@
   return [FNEventSet eventSetWithRef:self.faunaClass];
 }
 
-+ (FNFuture *)uniqueIDPresence:(NSString *)uniqueID {
++ (FNFuture *)isUniqueIDPresent:(NSString *)uniqueID {
   if (!self.faunaClass) {
     @throw FNInvalidResourceClass(@"+faunaClass is not defined on %@.", self);
   }

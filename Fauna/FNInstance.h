@@ -57,6 +57,6 @@
  Returns a future containing @YES if an instance exists with the given unique ID, or @NO otherwise.
  @param uniqueID the unique ID to test
  */
-+ (FNFuture *)uniqueIDPresence:(NSString *)uniqueID;
++ (FNFuture *)isUniqueIDPresent:(NSString *)uniqueID;
 
 @end

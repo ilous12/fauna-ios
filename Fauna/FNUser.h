@@ -31,7 +31,7 @@
  Returns a future containing @YES if a user exists with the given email, or @NO otherwise.
  @param email the email to test
  */
-+ (FNFuture *)emailPresence:(NSString *)email;
++ (FNFuture *)isEmailPresent:(NSString *)email;
 
 /*!
  Returns an authentication token for a user identified by email and password. The token may be used to construct an a FNContext to make requests on behalf of the user.

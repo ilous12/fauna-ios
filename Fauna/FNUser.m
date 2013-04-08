@@ -46,7 +46,7 @@
   return [FNContext put:@"users/self/config/password" parameters:params].done;
 }
 
-+ (FNFuture *)emailPresence:(NSString *)email {
++ (FNFuture *)isEmailPresent:(NSString *)email {
   NSString *path = [NSString stringWithFormat:@"users/email/%@/presence", [email urlEscapedWithEncoding:NSUTF8StringEncoding]];
   return [[FNContext get:path parameters:@{}] transform:^(FNFuture *result) {
     if (!result.isError) {
