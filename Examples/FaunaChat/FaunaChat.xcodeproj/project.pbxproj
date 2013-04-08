@@ -460,13 +460,11 @@
 		074CF6E0167855AE00686606 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FaunaChat/FaunaChat-Prefix.pch";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "FaunaChat/FaunaChat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -475,13 +473,11 @@
 		074CF6E1167855AE00686606 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "FaunaChat/FaunaChat-Prefix.pch";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "FaunaChat/FaunaChat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
