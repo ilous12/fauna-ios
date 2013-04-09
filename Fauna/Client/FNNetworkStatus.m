@@ -34,6 +34,10 @@ static void FNNetworkStatusCallback(SCNetworkReachabilityRef target, SCNetworkRe
 
 @implementation FNNetworkStatus
 
++ (void)initialize {
+  [self start];
+}
+
 + (void)start {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
@@ -46,7 +50,7 @@ static void FNNetworkStatusCallback(SCNetworkReachabilityRef target, SCNetworkRe
       @throw @"Failed to start Network Status listener.";
     }
 
-    if (!SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef, CFRunLoopGetMain(), kCFRunLoopCommonModes)) {
+    if (!SCNetworkReachabilitySetDispatchQueue(reachabilityRef, dispatch_get_main_queue())) {
       @throw @"Failed to start Network Status listener.";
     }
   });
@@ -69,7 +73,7 @@ static void FNNetworkStatusCallback(SCNetworkReachabilityRef target, SCNetworkRe
   int status = FNReachabilityOffline;
 
   NSLog(@"Network Reachability flags: %c%c %c%c%c%c%c%c%c\n",
-      (flags & kSCNetworkReachabilityFlagsIsWWAN)				  ? 'W' : '-',
+      (flags & kSCNetworkReachabilityFlagsIsWWAN)               ? 'W' : '-',
       (flags & kSCNetworkReachabilityFlagsReachable)            ? 'R' : '-',
 
       (flags & kSCNetworkReachabilityFlagsTransientConnection)  ? 't' : '-',

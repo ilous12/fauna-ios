@@ -67,7 +67,6 @@ NSString * const FaunaAPIBaseURLWithVersion = @"https://" FAUNA_API_HOST @"/" FA
 - (id)initWithAuthString:(NSString *)authString {
   self = [super init];
   if (self) {
-    [FNNetworkStatus start];
     _authString = authString;
     _authHeaderValue = [@"Basic " stringByAppendingString:authString.base64Encoded];
 
